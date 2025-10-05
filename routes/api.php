@@ -1,0 +1,15 @@
+<?php
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\BusinessController;
+use App\Http\Controllers\AuthController;
+
+// ...existing routes...
+
+Route::middleware('auth:sanctum')->post('/businesses', [BusinessController::class, 'store']);
+
+// ...existing routes...
+
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
