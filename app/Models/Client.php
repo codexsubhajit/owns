@@ -12,5 +12,12 @@ class Client extends Model
     protected $fillable = [
         'user_id',
         'company_name',
+        'plan',
     ];
+
+    // Add this relationship
+    public function businesses()
+    {
+        return $this->hasMany(\App\Models\Business::class, 'client_id');
+    }
 }

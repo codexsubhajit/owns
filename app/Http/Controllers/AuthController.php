@@ -23,6 +23,7 @@ class AuthController extends Controller
                 'password' => 'required|string|min:6|confirmed',
                 'company_name' => 'required|string|max:255'
             ]);
+            // dd($data); // Uncomment for debugging
             $user = $this->authService->registerClient($data);
 
             if ($request->expectsJson()) {
@@ -44,12 +45,18 @@ class AuthController extends Controller
                 'email' => 'required|email',
                 'password' => 'required|string'
             ]);
-            $token = $this->authService->loginClient($data);
+            if (!auth()->attempt($data)) {
+                throw new \Exception('Invalid credentials');
+            }
+            $request->session()->regenerate();
+
+            // Optionally, you can generate a token for API use
+            $token = auth()->user()->createToken('client-token')->plainTextToken;
 
             if ($request->expectsJson()) {
                 return response()->json(['token' => $token]);
             }
-            return redirect('/login')->with('success', 'Login successful! Token: ' . $token);
+            return redirect()->route('dashboard')->with('success', 'Login successful!');
         } catch (\Exception $e) {
             if ($request->expectsJson()) {
                 return response()->json(['error' => $e->getMessage()], 401);
